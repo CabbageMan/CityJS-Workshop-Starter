@@ -1,15 +1,15 @@
+
+import net from './brain/model';
+import next from './brain/next';
+
 // src_function/brain.js
 exports.handler = function(event, context, callback) {
 
-    // If you are building something serious you should probably 
-    // validate that request type :D
-    if (event.httpMethod !== "POST") {
-      return { statusCode: 405, body: "Method Not Allowed" };
-    }
+    const board = JSON.parse(event.body)
 
-    const string = event.body
+
     callback(null, {
     statusCode: 200,
-    body: `Hello, ${string}`
+    body: JSON.stringify(next(board, net))
     });
 }

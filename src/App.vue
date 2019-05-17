@@ -42,7 +42,7 @@
                 @toggleLock="handleLockToggle"
                 @setTurnAi="handleSetAIturn"
             />
-            <SplitButton :mode="mode" />
+            <SplitButton :mode="mode" @gameMode="modeSwitch" />
             <WinBanner />
             <Button @clicked="resetGame">Reset</Button>
         </div>
@@ -56,7 +56,6 @@ import SplitButton from "./components/SplitButton.vue";
 import CurrentTurn from "./components/CurrentTurn.vue";
 import WinBanner from "./components/WinBanner.vue";
 import uuid from "uuid/v1";
-
 export default {
     name: "app",
     components: {
@@ -88,6 +87,13 @@ export default {
         handleWin() {
             this.locked = true;
         },
+        modeSwitch() {
+            this.resetGame()
+            this.mode = this.mode === "2Player" ? "ai" : "2Player";
+            if(this.mode === 'ai') {
+                this.turn = 1
+            }
+        },
         resetGame() {
             this.game = uuid();
             this.locked = false;
@@ -115,16 +121,13 @@ export default {
     align-items: center;
     justify-content: center;
 }
-
 html {
     background-color: #1c1c1c;
 }
-
 body {
     margin: 0;
     padding: 0;
 }
-
 .github-corner:hover .octo-arm {
     animation: octocat-wave 560ms ease-in-out;
 }

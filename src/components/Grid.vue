@@ -73,7 +73,7 @@
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faTimes, faCircle } from "@fortawesome/free-solid-svg-icons";
 import Square from "./Square.vue";
-
+import { moves } from '../api';
 const winContitions = [
     [0,1,2],
     [3,4,5],
@@ -84,7 +84,6 @@ const winContitions = [
     [0,4,8],
     [2,4,6],
 ]
-
 export default {
     name: "Grid",
     components: {
@@ -116,7 +115,24 @@ export default {
             if (!this.board[position]) {
         
                 this.board = this.board.map((el, index) => index === position ? this.turn : el);
-
+                if (this.mode === 'ai') {
+                    this.$emit("toggleLock");
+                    if(this.win()) {
+                        return
+                    }
+                    this.$emit("turnSwitch");
+                    moves.getAIMove(this.board)
+                        .then(response => {
+                            const position = response.data.index
+                            this.board = this.board.map((el, index) => index === position ? this.turn : el)
+                            if(this.win()) {
+                                return
+                            }
+                            this.$emit("turnSwitch");
+                            this.$emit("toggleLock");
+                        })
+                    return
+                }
                 if(this.win()) {
                     return
                 }
@@ -154,16 +170,13 @@ export default {
     display: flex;
     flex-direction: column;
 }
-
 .row {
     display: flex;
     flex-direction: row;
 }
-
 .parapperTheWrapper {
     position: relative;
 }
-
 .overlayWrap {
     background-color: rgba(88, 88, 88, 0.8);
     z-index: 999;
@@ -171,17 +184,14 @@ export default {
     height: 100%;
     border-radius: 3px;
     position: absolute;
-
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
 }
-
 .emoji {
     font-size: 50px;
 }
-
 .winText {
     display: flex;
     justify-content: center;
@@ -190,19 +200,16 @@ export default {
     color: #ffffff;
     font-weight: bold;
 }
-
 .faTimes {
     font-size: 60px;
     color: #6Eb7F8;
     padding-right: 30px;
 }
-
 .faCircle {
     font-size: 60px;
     color: #DF6C69;
     padding-right: 30px;
 }
-
 .circleColor {
     color: #DF6C69;
 }
